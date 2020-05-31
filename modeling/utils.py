@@ -2,11 +2,8 @@ import os
 import sys
 import json
 import time
-from functools import partial
 import numpy as np
 from tqdm import tqdm
-from typing import List
-import json
 import itertools
 
 def convert_example(y, encoder):
