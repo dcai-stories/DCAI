@@ -4,6 +4,7 @@ import random
 import numpy as np
 import torch
 import torch.nn as nn
+import math
 from pathlib import Path
 from sklearn.utils import shuffle
 from datasets import roc_stories
@@ -91,6 +92,9 @@ def run_epoch(iter):
     for xmb_kg, xmb_st, mem in iter_data(*shuffle(trX_kg, trX_st, trMem, random_state=np.random),
                                    n_batch=n_batch_train, truncate=True, verbose=True):
         global n_updates
+        global past_loss
+        if n_updates == 0:
+           past_loss = math.inf 
         model.train()
         XMB_KG = torch.tensor(xmb_kg, dtype=torch.long).to(device)
         XMB_ST = torch.tensor(xmb_st, dtype=torch.long).to(device)
@@ -105,6 +109,8 @@ def run_epoch(iter):
            loss = compute_loss_fct(lm_logits=lm_logits, lm_labels=XMB_KG, encoder=text_encoder, batch_num=n_updates, accum_steps=int(16/args.n_batch))
         loss = float(loss)
         losses.append(loss)
+        if abs(past_loss - loss) < args.early_stop:
+           break
         print(loss)
         n_updates += 1
         if (n_updates + 1) % 20000 == 0:
