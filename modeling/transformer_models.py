@@ -688,11 +688,11 @@ class GPT2LMHeadModel(GPT2PreTrainedModel):
         if use_pointer:
            pn = torch.argmax(torch.sigmoid(self.pnk_layer1(hidden_states[:,-1,:])),dim=1)
         else:
-           pn = [1] * len(update_mem)  #torch.argmax(torch.sigmoid(self.pnk_layer1(hidden_states[:,-1,:])),dim=1)
+           pn = [1] * len(update_mem)  
         if update_mem is not None:
            for i in range(len(update_mem)):
                self.mem[i]['relations'].extend([self.r_embed(torch.tensor(x[:100] + [0] * (100-len(x[:100]))).long().cuda()) for x in update_mem[i][0]])
-               self.mem[i]['scores'].extend([int(pn[i]) * x for x in  update_mem[i][1]])   #self.mem[i]['scores'] [int(pn[i]) * x for x in normalize(update_mem[i][1])])
+               self.mem[i]['scores'].extend([int(pn[i]) * x for x in  update_mem[i][1]]) 
                self.mem[i]['scores'] = self.normalize(self.mem[i]['scores'])
            for i in range(len(self.mem)):
                if use_scores == 'Normal':
@@ -717,7 +717,7 @@ class GPT2LMHeadModel(GPT2PreTrainedModel):
             loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)),
                             shift_labels.view(-1))
             outputs = (loss,) + outputs
-        return outputs  # (loss), lm_logits, presents, (all hidden_states), (attentions)
+        return outputs  
 
 
 @add_start_docstrings("""The GPT2 Model transformer with a language modeling and a multiple-choice classification
