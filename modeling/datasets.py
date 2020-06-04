@@ -27,7 +27,7 @@ def process_ds(l, kg_type='atomic'):
           dim_id = random.sample(dims[kg_type],1)[0]
           relations = data[sent_id][dim_id]['relations']
     relation = relations[-1]
-    #mem = ''.join([' <|sent' + s + '|>' + process_mem(dim_id, data[s]) for s in data.keys() if int(s) < int(sent_id)])
+
     mem_vals = [clean_mem(data[s]) for s in data.keys() if int(s) < int(sent_id)]
     mem_keys = [s for s in data.keys() if int(s) < int(sent_id)]
     mem = dict(zip(mem_keys, mem_vals))
