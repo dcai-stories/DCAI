@@ -1,8 +1,8 @@
 # DCAI
 
-Modeling code can be found under '/modeling'
+Modeling code can be found in '/modeling'
 
-Weak Supervision code can be found under '/weak_supervision'
+Weak Supervision code can be found in '/weak_supervision'
 
 Links to evaluation metrics:
 
