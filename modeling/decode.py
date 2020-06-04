@@ -135,8 +135,6 @@ if args.model_type == 'comet_mem':
    model_path = './comet_mem/model/'
 if args.model_type == 'baseline':
    model_path = './masked_models4/model/'
-if args.model_type == 'baseline_partial':
-   model_path = './masked_baseline_partial/model/'
 if args.model_type == 'mem_partial':
    model_path = './masked_mem_partial/model/'
 if args.model_type == 'baseline_nopre':
@@ -153,10 +151,6 @@ if args.model_type == 'mem10':
    model_path = './masked_mem10_models4/model/'
 if args.model_type == 'mem20':
    model_path = './masked_mem20_models4/model/'
-if args.model_type == 'max-mem':
-   model_path = './max_mem_models/model/'
-if args.model_type == 'pg-mem':
-   model_path = './pg_mem_models/model/'
 
 model_path = model_path + best_model
 
@@ -253,11 +247,6 @@ class BeamHypotheses(object):
                 self.worst_score = min(score, self.worst_score)
 
     def is_done(self, best_sum_logprobs, cur_len=None):
-        """
-        If there are enough hypotheses and that none of the hypotheses being generated
-        can become better than the worst one in the heap, then we are done with this sentence.
-        """
-
         if len(self) < self.num_beams:
             return False
         elif self.early_stopping:
@@ -281,7 +270,7 @@ def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperatu
 
     # scores for each sentence in the beam
     beam_scores = torch.zeros((1, num_beams), dtype=torch.float, device=XMB.device)
-    # Greedy decoding it is made sure that only tokens of the first beam are considered to avoid sampling the exact same tokens three times
+
     beam_scores[:, 1:] = -1e9
     beam_scores = beam_scores.view(-1)  # shape (batch_size * num_beams,)
 
@@ -368,7 +357,6 @@ def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperatu
             next_batch_beam.extend(next_sent_beam)
             assert len(next_batch_beam) == num_beams * (batch_idx + 1)
 
-        # sanity check / prepare next batch
         assert len(next_batch_beam) == 1 * num_beams
         beam_scores = beam_scores.new([x[0] for x in next_batch_beam])
         beam_tokens = XMB.new([x[1] for x in next_batch_beam])
@@ -382,7 +370,7 @@ def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperatu
         if past:
             past = self._reorder_cache(past, beam_idx)
 
-        # stop when we are done with each sentence
+
         if all(done):
             break
 
@@ -404,14 +392,14 @@ def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperatu
                 next_scores[:, :num_beams][batch_idx], beam_scores.view(1, num_beams)[batch_idx]
             )
 
-        # need to add best num_beams hypotheses to generated hyps
+
         for beam_id in range(num_beams):
             effective_beam_id = batch_idx * num_beams + beam_id
             final_score = beam_scores[effective_beam_id].item()
             final_tokens = XMB[effective_beam_id]
             generated_hyps[batch_idx].add(final_tokens, final_score)
 
-    # depending on whether greedy generation is wanted or not define different output_batch_size and output_num_return_sequences_per_batch
+
     output_batch_size = 1 
     output_num_return_sequences_per_batch = 1
 
