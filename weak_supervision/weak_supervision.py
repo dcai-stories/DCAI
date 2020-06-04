@@ -294,26 +294,6 @@ def clean_sentence_names(sentence_tokens, names):
             cleaned_sentence_tokens.append(token)
     return cleaned_sentence_tokens
 
-def fetch_beam(comet_out):
-    try:
-       return comet_out["beams"]
-    except:
-       return []
-    
-
-def _format_comet_output(comet_out,kg_type='atomic'):
-    if kg_type == 'atomic':
-       key = "event"
-    else:
-       key = "e1"
-    return ([comet_out[dimensions_of_interest[0]][key],] + [json.dumps(fetch_beam(comet_out[dim])) for dim in dimensions_of_interest] + ["comet"])
-#    return (
-#        [comet_out[dimensions_of_interest[0]][key],]
-#        + [json.dumps(fetch_beam(comet_out[dim])) for dim in dimensions_of_interest]
-#        + ["comet"]
-#    )
-
-
 STORY_FIELDS = [
     "sentence1",
     "sentence2",
