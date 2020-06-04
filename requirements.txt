@@ -1,1 +1,7 @@
-
+tqdm
+transformers
+torch
+tensorboard_logger 
+nltk 
+easy-rouge 
+spacy
