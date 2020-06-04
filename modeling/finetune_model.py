@@ -122,6 +122,7 @@ argmax = lambda x: np.argmax(x, 1)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--early_stop',type=float,default=.1)
     parser.add_argument('--use_multigpu',type=bool,default=True)
     parser.add_argument('--use_pretrain',type=bool,default=True)
     parser.add_argument('--use_filter',type=bool,default=True)
